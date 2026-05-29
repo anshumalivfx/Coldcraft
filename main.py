@@ -3,7 +3,7 @@ Cold Outreach Agent — Week 1 MVP
 Usage: python main.py [--csv leads.csv] [--your-name "Your Name"] [--your-product "..."]
 
 Reads leads from CSV, scrapes each company site, extracts a hook,
-writes a personalized cold email with Claude, and prints results.
+writes a personalized cold email with an LLM, and prints results.
 """
 
 import csv
@@ -11,7 +11,7 @@ import os
 import sys
 import argparse
 import time
-import anthropic
+from groq import Groq
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.panel import Panel
@@ -20,7 +20,7 @@ from rich import box
 from rich.text import Text
 from rich.rule import Rule
 
-from src.agent.scraper import scrape_website, format_context_for_claude
+from src.agent.scraper import scrape_website, format_context_for_llm
 from src.agent.writer import extract_hook, write_email
 
 load_dotenv()
@@ -107,7 +107,7 @@ def print_summary(results: list[dict], elapsed: float):
     console.print(f"\n  Leads processed : [bold]{len(results)}[/bold]")
     console.print(f"  Avg personalization score : [bold]{avg:.1f}/10[/bold]")
     console.print(f"  Total time : [bold]{elapsed:.1f}s[/bold]")
-    console.print(f"  Approx cost : [bold]~${len(results) * 0.006:.3f}[/bold] (est. at $0.006/lead)\n")
+    console.print("  Approx cost : [bold]Check Groq pricing (free tier available)[/bold]\n")
 
 
 def main():
@@ -118,12 +118,12 @@ def main():
     parser.add_argument("--skip-scrape", action="store_true", help="Skip website scraping (faster, less personalized)")
     args = parser.parse_args()
 
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
-        console.print("[red]Error: ANTHROPIC_API_KEY not set. Add it to .env or environment.[/red]")
+        console.print("[red]Error: GROQ_API_KEY not set. Add it to .env or environment.[/red]")
         sys.exit(1)
 
-    client = anthropic.Anthropic(api_key=api_key)
+    client = Groq(api_key=api_key)
 
     try:
         leads = load_leads(args.csv)
@@ -153,7 +153,7 @@ def main():
         else:
             console.print(f"  [dim]Scraping {lead['website']}...[/dim]")
             scraped = scrape_website(lead["website"])
-            context = format_context_for_claude(lead, scraped)
+            context = format_context_for_llm(lead, scraped)
 
         # Step 2: extract hook
         console.print("  [dim]Extracting hook...[/dim]")

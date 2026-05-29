@@ -1,7 +1,7 @@
 # Coldcraft
 
 A Python agent that reads a CSV of leads, scrapes each company's website,
-extracts the single best "hook", and writes a personalized cold email using Claude.
+extracts the single best "hook", and writes a personalized cold email using Groq.
 
 Built in public. Follow the journey: @YourHandle
 
@@ -16,7 +16,7 @@ playwright install chromium
 
 # 2. Set your API key
 cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY
+# Edit .env and add your GROQ_API_KEY
 
 # 3. Edit leads.csv with your targets
 
@@ -35,10 +35,10 @@ python main.py --csv my_leads.csv
 
 1. **Scrape** — Playwright opens each company homepage, extracts hero text,
    meta description, and about section
-2. **Hook extraction** — Claude reads the scraped context and finds the single
+2. **Hook extraction** — Groq reads the scraped context and finds the single
    most specific, compelling angle (not generic praise)
-3. **Email writing** — Claude writes a 4-5 sentence email built around that hook
-4. **Quality gate** — If the personalization score is below 7/10, Claude
+3. **Email writing** — Groq writes a 4-5 sentence email built around that hook
+4. **Quality gate** — If the personalization score is below 7/10, Groq
    auto-retries with stricter instructions
 
 ---
@@ -57,8 +57,7 @@ Optional: `linkedin_url` (used in Week 2 for LinkedIn scraping)
 
 ## Cost
 
-~$0.006 per lead (claude-sonnet-4-6, 2 API calls per lead)
-100 leads ≈ $0.60
+Free tier available on Groq (rate-limited); check current pricing for paid usage.
 
 ---
 
@@ -76,5 +75,5 @@ Optional: `linkedin_url` (used in Week 2 for LinkedIn scraping)
 
 - Python 3.11+
 - Playwright (headless Chrome scraping)
-- Anthropic Claude API (claude-sonnet-4-6)
+- Groq API (llama-3.3-70b-versatile)
 - Rich (terminal output)

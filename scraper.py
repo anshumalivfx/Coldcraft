@@ -93,9 +93,9 @@ def scrape_website(url: str, timeout_ms: int = 12000) -> dict:
     return result
 
 
-def format_context_for_claude(lead: dict, scraped: dict) -> str:
+def format_context_for_llm(lead: dict, scraped: dict) -> str:
     """
-    Combine lead info + scraped data into a clean context string for Claude.
+    Combine lead info + scraped data into a clean context string for the LLM.
     """
     lines = [
         f"PROSPECT: {lead['name']}",
